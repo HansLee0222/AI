@@ -1,0 +1,151 @@
+import java.util.*;
+import java.math.*;
+ublic class CSPZebra extends CSP {
+	static Set<Object> colorV = new HashSet<Object>(Arrays.asList(new String[]{"red", "green", "yellow", "blue", "ivory"}));
+	static Set<Object> drinksV = new HashSet<Object>(Arrays.asList(new String[]{"coffee", "orange-juice", "tea", "water", "milk"}));
+	static Set<Object> nationV = new HashSet<Object>(Arrays.asList(new String[]{"englishman", "japanese", "norwegian", "ukranian", "spaniard"}));
+	static Set<Object> petV = new HashSet<Object>(Arrays.asList(new String[]{"dog", "fox", "horse", "zebra", "snail"}));
+	static Set<Object> cigarV = new HashSet<Object>(Arrays.asList(new String[]{"old-gold", "kools", "chesterfield", "lucky-strike", "parliament"}));
+
+	public boolean isGood(Object X, Object Y, Object x, Object y) {
+
+
+
+
+		//if X is not even mentioned in by the constraints, just return true
+		//as nothing can be violated
+		if(!C.containsKey(X))
+			return true;
+
+		//check to see if there is an arc between X and Y
+		//if there isn't an arc, then no constraint, i.e. it is good
+		if(!C.get(X).contains(Y))
+			return true;
+
+		//not equal constraint
+		//equal constraint
+		//1
+		if(X.equals("englishman") && Y.equals("red") && !x.equals(y))
+			return false;
+		//2
+		if(X.equals("spaniard") && Y.equals("dog") && !x.equals(y))
+			return false;
+		//3
+		if(X.equals("coffee") && Y.equals("green") && !x.equals(y))
+			return false;
+		//4
+		if(X.equals("ukranian") && Y.equals("tea") && !x.equals(y))
+			return false;
+		//5
+		if((X.equals("ivory") && Y.equals("green") && !((Integer)x - (Integer)y != 1)) ||
+				(X.equals("green") && Y.equals("ivory") && !((Integer)x - (Integer)y == 1)) )
+			return false;
+		//6
+		if(X.equals("old-gold") && Y.equals("snails") && !x.equals(y))
+			return false;
+		//7
+		if(X.equals("kools") && Y.equals("yellow") && !x.equals(y))
+			return false;
+		//8
+		if((X.equals("milk") && !x.equals(new Integer(3))) || (Y.equals("milk") && !y.equals(new Integer(3))))
+			return false;
+		//9
+		if((X.equals("norwegian") && !x.equals(new Integer(1))) || (Y.equals("norwegian") && !y.equals(new Integer(1))))
+			return false;
+		//10
+		if(X.equals("chesterfield") && Y.equals("fox") && !(Math.abs((Integer)x - (Integer)y) == 1))
+			return false;
+		//11
+		if(X.equals("kools") && Y.equals("horse") && !(Math.abs((Integer)x - (Integer)y) == 1))
+			return false;
+		//12
+		if(X.equals("lucky-strike") && Y.equals("orange-juice") && !x.equals(y))
+			return false;
+		//13
+		if(X.equals("japanese") && Y.equals("parliament") && !x.equals(y))
+			return false;
+		//14
+		if(X.equals("norwegian") && Y.equals("blue") && !(Math.abs((Integer)x - (Integer)y) == 1))
+			return false;
+
+			// uniqueness constraints
+		if(colorV.contains(X) && colorV.contains(Y) && !X.equals(Y) && x.equals(y))
+			return false;
+		if(DrinksV.contains(X) && DrinksV.contains(Y) && !X.equals(Y) && x.equals(y))
+			return false;
+		if(nationV.contains(X) && nationV.contains(Y) && !X.equals(Y) && x.equals(y))
+			return false;
+		if(petV.contains(X) && petV.contains(Y) && !X.equals(Y) && x.equals(y))
+			return false;
+		if(cigarV.contains(X) && cigarV.contains(Y) && !X.equals(Y) && x.equals(y))
+			return false;
+
+		return true;
+	}
+protected static void addDomain(CSPZebra csp, Set<Object> vars){
+ Integer[] dom = {1,2,3,4,5};
+ for(Object X : vars)
+	 csp.addDomain(X, dom);
+}
+
+protected static void BI(CSPZebra csp, String x, String y){
+	csp.addBidirectionalArc(x,y);
+}
+	public static void main(String[] args) throws Exception {
+		CSPGraphColoring CSP = new CSPGraphColoring();
+		addDomain(CSP, colorV);
+		addDomain(CSP, drinksV);
+		addDomain(CSP, nationV);
+		addDomain(CSP, cigarV);
+		addDomain(CSP, petV);
+
+		BI(CSP,"englishman", "red");
+		BI(CSP,"spaniard", "dog");
+		BI(CSP,"ukrainian", "tea");
+		BI(CSP,"coffee", "green");
+		BI(CSP,"green", "ivory");
+		BI(CSP,"old-gold", "snails");
+		BI(CSP,"chesterfield", "fox");
+		BI(CSP,"kools", "yellow");
+		BI(CSP,"lucky-strike", "orange-juice");
+		BI(CSP,"japanese", "parliament");
+		BI(CSP,"norwegian", "blue");
+		BI(CSP,"kools", "horse");
+
+		for(Object X: colorV)
+			for(Object Y: colorV)
+				csp.addBidirectionalArc(X,Y);
+
+		for(Object X: drinksV)
+			for(Object Y: drinksV)
+				csp.addBidirectionalArc(X,Y);
+
+		for(Object X: nationV)
+			for(Object Y: nationV)
+				csp.addBidirectionalArc(X,Y);
+
+		for(Object X: petV)
+			for(Object Y: petV)
+				csp.addBidirectionalArc(X,Y);
+
+		for(Object X: cigarV)
+			for(Object Y: cigarV)
+				csp.addBidirectionalArc(X,Y);
+		csp.addDomain("milk", new Integer[]{3});
+		csp.addDomain("norwegian", new Integer[]{1});
+		String[] vars = {"WA", "NT", "Q", "NSW", "V", "SA", "T"};
+		String[] colors = {"r", "g", "b"};
+		String[][] pairs = {{"WA","NT"}, {"NT","Q"}, {"Q","NSW"}, {"NSW","V"},
+							{"SA", "WA"}, {"SA", "NT"}, {"SA", "Q"},
+							{"SA", "NSW"}, {"SA", "V"}};
+
+		for(Object X : vars)
+			CSP.addDomain(X, colors);
+
+		for(Object[] p : pairs)
+			CSP.addBidirectionalArc(p[0], p[1]);
+
+		Search search = new Search(CSP);
+		System.out.println(search.BacktrackingSearch());
+	}
+}
